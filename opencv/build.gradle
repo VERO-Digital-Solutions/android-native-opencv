@@ -157,7 +157,7 @@ android {
 dependencies {
 }
 
-apply from: '/Users/danieledematteo/Projects/tests/native-opencv-android-template/maven-publish-helper.gradle'
+apply from: 'maven-publish-helper.gradle'
 
 publishing {
     publications {
