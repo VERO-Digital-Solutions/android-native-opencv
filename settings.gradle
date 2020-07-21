@@ -1,0 +1,3 @@
+include ':android-native-opencv'
+include ':opencv'
+rootProject.name = "AndroidOpenCV"
