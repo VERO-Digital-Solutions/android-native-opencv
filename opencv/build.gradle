@@ -89,6 +89,7 @@
 //
 
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 def openCVersionName = "4.3.0"
 def openCVersionCode = ((4 * 100 + 3) * 100 + 0) * 10 + 0
@@ -96,16 +97,17 @@ def openCVersionCode = ((4 * 100 + 3) * 100 + 0) * 10 + 0
 println "OpenCV: " +openCVersionName + " " + project.buildscript.sourceFile
 
 android {
+    namespace "org.opencv"
 
     lintOptions {
         abortOnError false
     }
 
-    compileSdkVersion 29
+    compileSdkVersion 36
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdkVersion 24
+        targetSdkVersion 36
 
         versionCode openCVersionCode
         versionName openCVersionName
@@ -117,6 +119,7 @@ android {
             }
         }
     }
+    ndkVersion "29.0.13599879"
 
     buildTypes {
         debug {
@@ -133,8 +136,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    publishing {
+        singleVariant("release") {}
+    }
+    buildFeatures {
+        buildConfig = true
+        aidl = true
     }
 
     sourceSets {
@@ -157,22 +167,31 @@ android {
 dependencies {
 }
 
-apply from: 'maven-publish-helper.gradle'
+// task to package sources into a JAR
+tasks.register('androidSourcesJar', Jar) {
+    archiveClassifier.set("sources")
+    from android.sourceSets.main.java.srcDirs
+}
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            // Specify own groupId as package name of your library,
-            // otherwise it would just use project's name (=name of the root directory) by default.
-            groupId 'net.kuama.android'
+project.afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                // Specify own groupId as package name of your library,
+                // otherwise it would just use project's name (=name of the root directory) by default.
+                groupId 'com.github.VERO-Digital-Solutions'
 
-            // Specify custom artifactId if needed,
-            // otherwise it would use module's name by default.
-            artifactId 'opencv'
+                // Specify custom artifactId if needed,
+                // otherwise it would use module's name by default.
+                artifactId 'android-document-scanner'
 
-            // You can specify custom version,
-            // otherwise it would use version from `android { defaultConfig { ... } }` by default.
-            version '4.3.0'
+                // You can specify custom version,
+                // otherwise it would use version from `android { defaultConfig { ... } }` by default.
+                version '1.0.0'
+                // attach sources JAR
+                artifact(androidSourcesJar)
+            }
         }
     }
 }

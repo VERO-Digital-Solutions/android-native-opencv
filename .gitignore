@@ -38,6 +38,12 @@ captures/
 
 # IntelliJ
 *.iml
+.idea/Android*
+.idea/appIns*
+.idea/compiler.xml
+.idea/material_them*
+.idea/misc.xml
+.idea/runConf*
 .idea/workspace.xml
 .idea/tasks.xml
 .idea/gradle.xml
